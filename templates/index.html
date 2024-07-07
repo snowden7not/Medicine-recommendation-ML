@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Health Center</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+      <style>
+        body {
+          background-color: #004B23;
+        }
+        .navbar-toggler {
+          border: 0;
+          outline: none;
+        }
+        .navbar-toggler .navbar-toggler-icon {
+          background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3e%3cpath stroke='rgba(250,250,250)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+        .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
+          background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3e%3cpath stroke='rgba(250,250,250)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M6 6L24 24M24 6L6 24'/%3e%3c/svg%3e");
+        }
+         .logo {
+            width: 50px;
+            height: 50px;
+            color: black;
+            margin-top: 0;
+            margin-left: 2px;
+        }
+        .myimg {
+            width: 50px;
+            height: 50px;
+            border: 2px solid black;
+            border-radius: 15px;
+        }
+        .glassy-div {
+           top: 50%;
+           box-shadow: 0 0 5px 0;
+           background: inherit;
+           backdrop-filter: blur(100px);
+           text-align: center;
+        }
+        .bg-custom {
+            background-color: #007200 ;
+        }
+      </style>
+  </head>
+  <body class="text-white">
+    <!--navbar-->
+    <nav class="glassy-div navbar navbar-expand-lg navbar-dark bg-custom">
+      <div class="container">
+        <a class="navbar-brand d-flex" href="/">
+          <div class="me-1 logo">
+              <img class="myimg" src="{{ url_for('static', filename='medicine logo.jpg') }}" alt="">
+          </div>
+            <h2 class="m-auto">Health Center</h2>
+        </a>
+
+
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon">
+          </span>
+        </button>
+        <div class=" collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/">Home</a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="/about">About</a>
+            </li>
+          </ul>
+
+            <div class="result-container">
+                <button class="toggle-button" data-bs-toggle="modal" data-bs-target="#diseaseModal" style="font-size:20px;font-weight:bold; width:140px; border-radius:5px; background:#F39334;">
+            <!--<button class="btn btn-outline-success bg-warning" type="submit">-->
+              <i class="bi bi-search ">   Search</i>
+            </button>
+            </div>
+
+        </div>
+
+      </div>
+    </nav>
+
+<!-- Modal for Search button -->
+    <div class="modal fade" id="diseaseModal" tabindex="-1" aria-labelledby="diseaseModalLabel" aria-hidden="true" style="margin-top: 60px;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #70E000; color:black;"> <!-- Set header background color inline -->
+                    <h5 class="modal-title" id="diseaseModalLabel">Search </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="background-color: #008000"> <!-- Set modal body background color inline -->
+                    <!--<p>{{ predicted_disease }}</p>-->
+                    <div class="container my-4 mt-4" style="background: #006400; color: white; border-radius: 15px; padding: 40px;">
+                        <form action="/search_predict" method="post">
+                            <div class="form-group">
+                                <label for="symptoms">Enter Your Symptoms below, and find Your Relief.</label>
+                                <input type="text" class="form-control", id="symptoms" name="symptoms" placeholder="high_fever, cough, runny_nose, continuous_sneezing, throat_irritation, sinus_pressure etc">
+                            </div>
+                            <br>
+
+                            <div name="mysysms" id="transcription" ></div>
+                            <!--{% if message %}
+                            <p>{{ message }}</p>
+                            {% endif %}-->
+                            <br>
+                            <button type="submit" class=" btn btn-lg" style="width: 90%; padding: 14px; margin-bottom: 5px; background-color: #70E000;" >Recommend</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    {% if message %}
+    <div class="my-4 ms-4">
+        <h3>Message:</h3>
+        <p>{{message}}</p>
+    </div>
+    {% endif %}
+
+    {% if selected_symptoms %}
+    <div class="my-4 ms-4">
+        <h3>Selected Symptoms:</h3>
+        <ul>
+            {% for symptom in selected_symptoms %}
+            <li>{{ symptom }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    {% if searched_symptoms %}
+    <div class="my-4 ms-4">
+        <h3>Searched Symptoms:</h3>
+        <p>{{searched_symptoms}}</p>
+    </div>
+    {% endif %}
+
+    <!--Showing results on ui with final touch-->
+    {% if predicted_disease and dis_des  %}
+    <h2 class="text-center my-4 py-3 me-3 ms-3 text-black" style="background-color: #9EF01A; border-radius: 10px;">
+        AI recommendations
+    </h2>
+    <div class="ms-4" style="">
+    <div class="">
+        <h3 class="ps-1 py-2 me-3 " style="background-color: #38B000; border-radius: 10px;">Predicted Disease: </h3>
+        <div class="px-3" style="">
+            <p>{{ predicted_disease }}</p>
+            <p>{{ dis_des }}</p>
+        </div>
+    </div>
+
+    <div class="">
+
+        {% for medication in medications %}
+        <!--<h3 class="ps-1 py-2 me-3" style="background-color: #38B000; border-radius: 10px;">Recommended Medicine: </h3>-->
+        <h3 class="ps-1 py-2 me-3" style="background-color: #38B000; border-radius: 10px;"><a class="text-white" href="https://www.google.com/search?q={{medications[0]|string|replace('[', '')|replace(']', '') }}+1mg+{{ predicted_disease }}&tbm=isch" target="_blank">Recommended Medicine: </a></h3>
+
+        <div class="px-3" style="">
+            <!--{% for i in medications %}
+                <p ><a class="text-white" href="https://www.google.com/search?q={{i|string|replace('[', '')|replace(']', '') }} 1mg &tbm=isch" target="_blank">{{i.replace('[', '').replace(']', '')}}</a></p>
+            {% endfor %}-->
+            <ul>
+                    {% for word in medication.strip('[]').split(', ') %}
+                        <!--<li>{{ word.replace("'", "") }}</li>-->
+                <li>
+                <a class="text-white" href="https://www.google.com/search?q={{word }}+1mg+{{ predicted_disease }}&tbm=isch" target="_blank">
+                    {{ word.replace("'", "") }}
+                </a>
+                    </li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+
+    </div>
+
+    <div class="">
+        <h3 class="ps-1 py-2 me-3" style="background-color: #38B000; border-radius: 10px;">Precaution: </h3>
+        <div class="px-3" style="">
+            <ul>
+                {% for i in my_precautions %}
+                    <li>{{ i }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="">
+        <h3 class="ps-1 py-2 me-3" style="background-color: #38B000; border-radius: 10px;">Suggestion: </h3>
+        <div class="px-3" style="">
+            <ul>
+                {% for i in workout %}
+                    <li>{{ i }}</li>
+                {% endfor %}
+                <ul>
+            </ul>
+            </ul>
+        </div>
+    </div>
+
+    <div class="">
+        <h3 class="ps-1 py-2 me-3" style="background-color: #38B000; border-radius: 10px;">Diet: </h3>
+        <div class="px-3" style="">
+            <!--{% for i in my_diet %}
+                <p>{{i.replace('[', '').replace(']', '')}}</p>
+            {% endfor %}-->
+            <ul>
+            {% for d in my_diet %}
+                {% for word in d.strip('[]').split(', ') %}
+                    <li>{{ word.replace("'", "") }}</li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+        </div>
+    </div>
+    </div>
+    {% endif %}
+
+
+    <!--categories-->
+    <div class="container my-5 ">
+    <h1 class="text-center mb-4 ">Disease Symptom Selector</h1>
+    <form action="/predict" method="post">
+      <div class="accordion " id="symptomAccordion">
+        <script>
+          var symptoms = [
+            {
+              category: "Respiratory Symptoms",
+              items: [
+                "continuous_sneezing", "cough", "high_fever", "breathlessness", "phlegm",
+                "throat_irritation", "sinus_pressure", "runny_nose", "congestion", "chest_pain",
+                "mucoid_sputum", "rusty_sputum", "blood_in_sputum", "shivering", "chills"
+              ]
+            },
+            {
+              category: "Gastrointestinal Symptoms",
+              items: [
+                "stomach_pain", "acidity", "ulcers_on_tongue", "vomiting", "indigestion",
+                "nausea", "loss_of_appetite", "abdominal_pain", "diarrhoea", "constipation",
+                "belly_pain", "stomach_bleeding", "distention_of_abdomen", "pain_during_bowel_movements",
+                "pain_in_anal_region", "bloody_stool", "irritation_in_anus"
+              ]
+            },
+            {
+              category: "Skin and Nail Symptoms",
+              items: [
+                "itching", "skin_rash", "nodal_skin_eruptions", "patches_in_throat", "yellowish_skin",
+                "bruising", "drying_and_tingling_lips", "red_spots_over_body", "dischromic_patches",
+                "pus_filled_pimples", "blackheads", "scurring", "skin_peeling", "silver_like_dusting",
+                "small_dents_in_nails", "inflammatory_nails", "blister", "red_sore_around_nose",
+                "yellow_crust_ooze"
+              ]
+            },
+            {
+              category: "Urinary Symptoms",
+              items: [
+                "burning_micturition", "spotting_ urination", "passage_of_gases", "internal_itching",
+                "foul_smell_of_urine", "continuous_feel_of_urine", "bladder_discomfort", "polyuria"
+              ]
+            },
+            {
+              category: "Musculoskeletal Symptoms",
+              items: [
+                "joint_pain", "muscle_wasting", "knee_pain", "hip_joint_pain", "muscle_weakness",
+                "stiff_neck", "swelling_joints", "movement_stiffness", "weakness_of_one_body_side",
+                "muscle_pain", "painful_walking", "neck_pain", "back_pain", "cramps"
+              ]
+            },
+            {
+              category: "Neurological Symptoms",
+              items: [
+                "headache", "dizziness", "slurred_speech", "spinning_movements", "loss_of_balance",
+                "unsteadiness", "loss_of_smell", "lack_of_concentration", "visual_disturbances",
+                "altered_sensorium", "coma"
+              ]
+            },
+            {
+              category: "Cardiovascular Symptoms",
+              items: [
+                "fast_heart_rate", "palpitations"
+              ]
+            },
+            {
+              category: "Endocrine Symptoms",
+              items: [
+                "irregular_sugar_level", "excessive_hunger", "polyuria"
+              ]
+            },
+            {
+              category: "Constitutional Symptoms",
+              items: [
+                "fatigue", "weight_gain", "anxiety", "mood_swings", "weight_loss", "restlessness",
+                "lethargy", "malaise", "weakness_in_limbs", "obesity", "toxic_look_(typhos)",
+                "depression", "irritability", "prognosis"
+              ]
+            },
+            {
+              category: "Fluid and Electrolyte Imbalance",
+              items: [
+                "cold_hands_and_feets", "sweating", "dehydration", "yellow_urine", "yellowing_of_eyes",
+                "fluid_overload", "swelling_of_stomach", "swelled_lymph_nodes", "swollen_legs",
+                "swollen_blood_vessels", "puffy_face_and_eyes", "enlarged_thyroid", "swollen_extremeties",
+                "sunken_eyes", "dark_urine", "pain_behind_the_eyes", "blurred_and_distorted_vision",
+                "redness_of_eyes", "watering_from_eyes", "increased_appetite", "prominent_veins_on_calf"
+              ]
+            },
+            {
+              category: "Hematological Symptoms",
+              items: [
+                "receiving_blood_transfusion", "receiving_unsterile_injections", "history_of_alcohol_consumption"
+              ]
+            },
+            {
+              category: "Menstrual Symptoms",
+              items: [
+                "abnormal_menstruation"
+              ]
+            },
+            {
+              category: "Family History",
+              items: [
+                "family_history"
+              ]
+            },
+            {
+              category: "Miscellaneous Symptoms",
+              items: [
+                "extra_marital_contacts", "fluid_overload"
+              ]
+            }
+          ];
+        </script>
+
+        <script>
+          symptoms.forEach(function(category) {
+            document.write(`
+              <div class="card mb-1 text-white " style="background-color: #007200 ;" >
+                <div class="card-header">
+                  <h2 class="mb-0">
+                    <button class="text-white btn btn-link btn-block text-left collapsed" type="button" data-toggle="collapse" data-target="#collapse${category.category.replace(/\s/g, '')}" aria-expanded="false" aria-controls="collapse${category.category.replace(/\s/g, '')}">
+                      ${category.category}
+                    </button>
+                  </h2>
+                </div>
+                <div id="collapse${category.category.replace(/\s/g, '')}" class="collapse" aria-labelledby="heading${category.category.replace(/\s/g, '')}" data-parent="#symptomAccordion">
+                  <div class="card-body">
+                    ${category.items.map(function(item) {
+                      return `
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" name="symptoms[]" value="${item}">
+                          <label class="form-check-label">${item}</label>
+                        </div>
+                      `;
+                    }).join('')}
+                  </div>
+                </div>
+              </div>
+            `);
+          });
+        </script>
+
+      </div>
+      <button type="submit" class="btn btn-primary btn-block mt-4 text-black " style="background-color: #CCFF33;">Recommend </button>
+    </form>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  </body>
+</html>
