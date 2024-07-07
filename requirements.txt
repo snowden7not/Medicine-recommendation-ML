@@ -16,7 +16,6 @@ joblib==1.4.2
 
 
 
-matplotlib-inline==0.1.7
 
 numpy==2.0.0
 
