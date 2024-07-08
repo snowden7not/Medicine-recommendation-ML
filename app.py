@@ -218,7 +218,7 @@ def blog():
 
 
 # python main =========================================
-if __name__ == "__main__":
+#if __name__ == "__main__":
     # Comment out or remove this line for production deployment
     # app.run(debug=True)
-    pass
+    #pass
